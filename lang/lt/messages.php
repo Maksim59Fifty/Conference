@@ -1,0 +1,68 @@
+<?php
+
+return [
+    'app' => [
+        'name' => 'Konferencijų sistema',
+    ],
+    'navbar' => [
+        'logout' => 'Atsijungti',
+        'user' => ':first_name :last_name',
+    ],
+    'home' => [
+        'title' => 'Pagrindinis puslapis',
+        'student_info' => 'Studento informacija',
+        'student_name' => 'Vardas',
+        'student_surname' => 'Pavardė',
+        'student_group' => 'Grupė',
+        'client_area' => 'Kliento posistemis',
+        'employee_area' => 'Darbuotojo posistemis',
+        'admin_area' => 'Sistemos administratoriaus posistemis',
+    ],
+    'client' => [
+        'conferences' => 'Konferencijos',
+        'view' => 'Peržiūrėti',
+        'register' => 'Registruotis',
+        'conference_list' => 'Konferencijų sąrašas',
+        'register_success' => 'Sėkmingai užsiregistravote į konferenciją.',
+        'register_form' => 'Registracijos forma',
+        'your_name' => 'Jūsų vardas',
+        'your_email' => 'El. pašto adresas',
+    ],
+    'employee' => [
+        'conferences' => 'Konferencijos',
+        'conference_list' => 'Visų konferencijų sąrašas',
+        'registered_clients' => 'Užsiregistravę klientai',
+    ],
+    'admin' => [
+        'dashboard' => 'Administratoriaus valdymo skydelis',
+        'user_management' => 'Naudotojų duomenų valdymas',
+        'conference_management' => 'Konferencijų valdymas',
+        'users' => 'Naudotojai',
+        'edit' => 'Redaguoti',
+        'create_conference' => 'Nauja konferencija',
+        'conference_list' => 'Konferencijų sąrašas',
+        'delete' => 'Šalinti',
+        'create' => 'Kurti',
+        'save' => 'Išsaugoti',
+        'back' => 'Atgal',
+        'conference_created' => 'Konferencija sėkmingai sukurta.',
+        'conference_updated' => 'Konferencija sėkmingai atnaujinta.',
+        'conference_deleted' => 'Konferencija sėkmingai pašalinta.',
+        'cannot_delete_past' => 'Negalima šalinti jau įvykusios konferencijos.',
+        'user_updated' => 'Naudotojo duomenys sėkmingai atnaujinti.',
+    ],
+    'conference' => [
+        'title' => 'Pavadinimas',
+        'description' => 'Aprašymas',
+        'lecturers' => 'Lektoriai',
+        'date' => 'Data',
+        'time' => 'Laikas',
+        'address' => 'Adresas',
+        'view' => 'Konferencijos peržiūra',
+    ],
+    'user' => [
+        'first_name' => 'Vardas',
+        'last_name' => 'Pavardė',
+        'email' => 'El. pašto adresas',
+    ],
+];
