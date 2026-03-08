@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * SD1: In-memory user data (edits stored in session via UserStorage).
+ */
+
 return [
     'items' => [
         1 => [
