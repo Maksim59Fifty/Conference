@@ -3,57 +3,51 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Services\ConferenceStorage;
+use App\Models\Conference;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ConferenceController extends Controller
 {
-    public function __construct(
-        private ConferenceStorage $conferenceStorage
-    ) {}
-
     /**
-     * Display list of conferences for client (planned only or all with register/view actions).
+     * Display list of upcoming conferences for clients.
      */
     public function index(): View
     {
-        $conferences = $this->conferenceStorage->getAll();
+        $conferences = Conference::whereDate('date', '>=', today())->get();
         return view('client.conferences.index', compact('conferences'));
     }
 
     /**
      * Display the specified conference.
      */
-    public function show(int $id): View|RedirectResponse
+    public function show(int $id): View
     {
-        $conference = $this->conferenceStorage->find($id);
-        if (!$conference) {
-            abort(404);
-        }
-        return view('client.conferences.show', compact('conference'));
+        $conference = Conference::findOrFail($id);
+        $isRegistered = Auth::check()
+            ? Auth::user()->conferences()->where('conference_id', $id)->exists()
+            : false;
+
+        return view('client.conferences.show', compact('conference', 'isRegistered'));
     }
 
     /**
-     * Process client registration for a conference.
+     * Register authenticated client for a conference.
      */
     public function register(Request $request, int $id): RedirectResponse
     {
-        $conference = $this->conferenceStorage->find($id);
-        if (!$conference) {
-            abort(404);
+        $conference = Conference::findOrFail($id);
+
+        if ($conference->isPast()) {
+            return back()->with('error', __('messages.client.cannot_register_past'));
         }
 
-        $validated = $request->validate([
-            'client_name' => 'required|string|max:255',
-            'client_email' => 'required|email',
-        ]);
-
-        $this->conferenceStorage->addRegistration($id, [
-            'name' => $validated['client_name'],
-            'email' => $validated['client_email'],
-        ]);
+        $user = Auth::user();
+        if (!$user->conferences()->where('conference_id', $id)->exists()) {
+            $user->conferences()->attach($id);
+        }
 
         return redirect()->route('client.conferences.show', $id)
             ->with('success', __('messages.client.register_success'));

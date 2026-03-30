@@ -4,6 +4,11 @@
 
 @section('content')
 <h1 class="h4 mb-4">{{ __('messages.client.conference_list') }}</h1>
+
+@if (session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
 <div class="card">
     <div class="card-body">
         <table class="table table-striped">
@@ -16,17 +21,27 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($conferences as $conference)
+                @forelse ($conferences as $conference)
                 <tr>
-                    <td>{{ $conference['title'] }}</td>
-                    <td>{{ $conference['date'] }}</td>
-                    <td>{{ $conference['time'] ?? '-' }}</td>
+                    <td>{{ $conference->title }}</td>
+                    <td>{{ $conference->date->format('Y-m-d') }}</td>
+                    <td>{{ $conference->time ?? '-' }}</td>
                     <td class="d-flex gap-1">
-                        <a href="{{ route('client.conferences.show', $conference['id']) }}" class="btn btn-sm btn-outline-primary">{{ __('messages.client.view') }}</a>
-                        <a href="{{ route('client.conferences.show', $conference['id']) }}#register" class="btn btn-sm btn-primary">{{ __('messages.client.register') }}</a>
+                        <a href="{{ route('client.conferences.show', $conference->id) }}"
+                           class="btn btn-sm btn-outline-primary">
+                            {{ __('messages.client.view') }}
+                        </a>
+                        <a href="{{ route('client.conferences.show', $conference->id) }}#register"
+                           class="btn btn-sm btn-primary">
+                            {{ __('messages.client.register') }}
+                        </a>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="4" class="text-center text-muted">{{ __('messages.conference.none') }}</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
