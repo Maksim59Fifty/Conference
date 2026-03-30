@@ -5,25 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreConferenceRequest;
 use App\Http\Requests\UpdateConferenceRequest;
-use App\Services\ConferenceStorage;
+use App\Models\Conference;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ConferenceController extends Controller
 {
-    public function __construct(
-        private ConferenceStorage $conferenceStorage
-    ) {}
-
     /**
      * Display list of conferences with create, edit, delete actions.
      */
     public function index(): View
     {
-        $conferences = $this->conferenceStorage->getAll();
-        foreach ($conferences as $id => $conf) {
-            $conferences[$id]['is_past'] = $this->conferenceStorage->isPast($conf);
-        }
+        $conferences = Conference::orderBy('date', 'desc')->get();
         return view('admin.conferences.index', compact('conferences'));
     }
 
@@ -41,7 +34,8 @@ class ConferenceController extends Controller
      */
     public function store(StoreConferenceRequest $request): RedirectResponse
     {
-        $this->conferenceStorage->store($request->validated());
+        Conference::create($request->validated());
+
         return redirect()->route('admin.conferences.index')
             ->with('success', __('messages.admin.conference_created'));
     }
@@ -49,13 +43,10 @@ class ConferenceController extends Controller
     /**
      * Show the form for editing the specified conference.
      */
-    public function edit(int $conference): View|RedirectResponse
+    public function edit(int $conference): View
     {
-        $conferenceData = $this->conferenceStorage->find($conference);
-        if (!$conferenceData) {
-            abort(404);
-        }
-        return view('admin.conferences.edit', ['conference' => $conferenceData]);
+        $conference = Conference::findOrFail($conference);
+        return view('admin.conferences.edit', compact('conference'));
     }
 
     /**
@@ -63,11 +54,9 @@ class ConferenceController extends Controller
      */
     public function update(UpdateConferenceRequest $request, int $conference): RedirectResponse
     {
-        $conferenceData = $this->conferenceStorage->find($conference);
-        if (!$conferenceData) {
-            abort(404);
-        }
-        $this->conferenceStorage->update($conference, $request->validated());
+        $conference = Conference::findOrFail($conference);
+        $conference->update($request->validated());
+
         return redirect()->route('admin.conferences.index')
             ->with('success', __('messages.admin.conference_updated'));
     }
@@ -77,18 +66,15 @@ class ConferenceController extends Controller
      */
     public function destroy(int $conference): RedirectResponse
     {
-        $conferenceData = $this->conferenceStorage->find($conference);
-        if (!$conferenceData) {
-            abort(404);
-        }
-        if ($this->conferenceStorage->isPast($conferenceData)) {
+        $conference = Conference::findOrFail($conference);
+
+        if ($conference->isPast()) {
             return redirect()->route('admin.conferences.index')
                 ->with('error', __('messages.admin.cannot_delete_past'));
         }
-        if (!$this->conferenceStorage->delete($conference)) {
-            return redirect()->route('admin.conferences.index')
-                ->with('error', __('messages.admin.cannot_delete_past'));
-        }
+
+        $conference->delete();
+
         return redirect()->route('admin.conferences.index')
             ->with('success', __('messages.admin.conference_deleted'));
     }
