@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * SD1: In-memory conference data (merged with session in ConferenceStorage).
+ */
+
 return [
     'items' => [
         1 => [

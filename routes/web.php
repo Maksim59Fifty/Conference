@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * SD1: Conference system routes - home, client, employee, admin subsystems.
+ */
+
 use App\Http\Controllers\Admin\ConferenceController as AdminConferenceController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
